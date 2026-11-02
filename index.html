@@ -1,0 +1,904 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lecture 22 · Google Sign-In</title>
+  <meta name="description" content="Mobile App Development with Flutter, Lecture 22: Add a Continue with Google button to the login page with google_sign_in 7.x and Firebase Authentication, including the Android fingerprints, the iOS URL scheme, cancel handling and signing out of both.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="flutter-logo" viewBox="0 0 166 210">
+    <path fill="#44D1FD" d="M10 101 100 11h56L38 129z"/>
+    <path fill="#1FBCFD" d="M51 150 100 102h56l-77 76z"/>
+    <path fill="#08589C" d="M79 178 107 150l49 49h-56z"/>
+  </symbol>
+  <symbol id="i-git" viewBox="0 0 24 24"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M6 3v12"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><path d="M12 15V3"/></symbol>
+  <symbol id="i-windows" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></symbol>
+  <symbol id="i-laptop" viewBox="0 0 24 24"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9"/><path d="M2 19.5 4 16h16l2 3.5a1 1 0 0 1-.9 1.5H2.9a1 1 0 0 1-.9-1.5z"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/><path d="M5 3v4M3 5h4M19 17v4M17 19h4"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></symbol>
+  <symbol id="i-disk" viewBox="0 0 24 24"><path d="M22 12H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/><path d="M6 16h.01M10 16h.01"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M5 12.6a11 11 0 0 1 14 0"/><path d="M1.4 9a16 16 0 0 1 21.2 0"/><path d="M8.5 16.1a6 6 0 0 1 7 0"/><path d="M12 20h.01"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.7 18-8-14a2 2 0 0 0-3.5 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3 12 2"/></symbol>
+  <symbol id="i-package" viewBox="0 0 24 24"><path d="m7.5 4.3 9 5.1"/><path d="M21 8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><path d="M12 19h8"/></symbol>
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+  <symbol id="i-mouse" viewBox="0 0 24 24"><path d="m4 4 7 17 2.5-7.5L21 11z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-chrome" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M21.2 8H12M3.9 6.1 8.5 14M10.9 21.9l4.6-7.9"/></symbol>
+  <symbol id="i-cable" viewBox="0 0 24 24"><path d="M17 21v-2a1 1 0 0 1-1-1v-1a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1v2"/><path d="M19 15V6.5a3.5 3.5 0 0 0-7 0v11a3.5 3.5 0 0 1-7 0V9"/><path d="M3 9V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4z"/></symbol>
+  <symbol id="i-apple" viewBox="0 0 24 24"><path d="M12 7c-1.5-1.3-4.5-1.6-6 .5-1.6 2.3-1 6.6 1.3 9.9 1 1.4 2 2.6 3.2 2.5.9 0 1.2-.6 1.5-.6s.6.6 1.5.6c1.2.1 2.2-1.1 3.2-2.5 2.3-3.3 2.9-7.6 1.3-9.9-1.5-2.1-4.5-1.8-6-.5z"/><path d="M12 7c0-2 1-3.5 3-4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 1 10-10c0 2.8-2.2 4-4 4h-2a2 2 0 0 0-1.5 3.3c.5.6.3 1.7-.5 2.2-.6.3-1.3.5-2 .5z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="10.5" r="1"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
+  <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+  <symbol id="i-android" viewBox="0 0 24 24"><path d="M3 18a9 9 0 0 1 18 0z"/><path d="m6.5 10.5-2-3.5M17.5 10.5l2-3.5"/><path d="M8.5 14.5h.01M15.5 14.5h.01"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></symbol>
+  <symbol id="i-fingerprint" viewBox="0 0 24 24"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></symbol>
+  <symbol id="i-log-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+  <symbol id="i-badge-check" viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></symbol>
+  <symbol id="i-languages" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
+  <symbol id="i-switch" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></symbol>
+  <symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></symbol>
+</svg>
+
+<div class="progress" aria-hidden="true"><span></span></div>
+
+<main class="deck">
+
+<!-- 01 · Title -->
+<section class="slide">
+  <div class="canvas"><div class="frame frame--title" style="grid-template-columns: 1fr 1fr;">
+    <div class="stagger">
+      <p class="kicker">Lecture 22 · Mobile App Development</p>
+      <h1 class="hero">Firebase 3:<br><span class="grad-text">Google Sign-In</span></h1>
+      <p class="lead lead--hero">One tap, no new password. Today our Lecture 21 login page gets a “Continue with Google” button.</p>
+      <div class="chips">
+        <span class="chip"><span class="avatar">MI</span>Eng. Monther Ibrahim</span>
+        <span class="chip"><span class="avatar">M</span>Muhammad, M.Sc.</span>
+        <span class="chip">Fall 2026</span>
+      </div>
+      <p class="keys"><kbd>→</kbd> next &nbsp;·&nbsp; <kbd>F</kbd> fullscreen &nbsp;·&nbsp; <kbd>N</kbd> notes &nbsp;·&nbsp; <kbd>T</kbd> theme</p>
+    </div>
+    <div class="title-right" aria-hidden="true" style="display:flex; align-items:center; justify-content:center; gap:.4cqw;">
+      <div class="logo-glow" style="left:22%; top:14%;"></div>
+      <div class="ph" style="--pw:11.5cqw; align-self:flex-start; margin-top:1.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="col" style="gap:.6em; padding-top:2.6em;">
+            <div style="display:grid; place-items:center;"><svg class="logo" style="width:2.6em; height:3.3em;"><use href="#flutter-logo"/></svg></div>
+            <div class="m-title" style="text-align:center;">Welcome back</div>
+            <div class="m-sub" style="text-align:center;">Log in to continue</div>
+            <div class="m-field" style="margin-top:.4em;"><svg class="ico"><use href="#i-mail"/></svg>Email</div>
+            <div class="m-field"><svg class="ico"><use href="#i-lock"/></svg>Password</div>
+            <div class="m-btn m-btn--fill is-wide" style="margin-top:.3em;">Login</div>
+            <div class="rowx m-or"><div class="m-divider"></div><span>or</span><div class="m-divider"></div></div>
+            <div class="m-btn m-btn--out m-btn--google is-wide"><span class="gmark">G</span>Continue with Google</div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-mid" style="font-size:1.6cqw;"><svg class="ico"><use href="#i-arrow-right"/></svg></div>
+      <div class="ph" style="--pw:11.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="col" style="gap:.6em; padding-top:2.6em;">
+            <div style="display:grid; place-items:center;"><svg class="logo" style="width:2.6em; height:3.3em;"><use href="#flutter-logo"/></svg></div>
+            <div class="m-title" style="text-align:center;">Welcome back</div>
+            <div class="m-sub" style="text-align:center;">Log in to continue</div>
+            <div class="m-field" style="margin-top:.4em;"><svg class="ico"><use href="#i-mail"/></svg>Email</div>
+          </div>
+          <div class="scrim"></div>
+          <div class="gsheet">
+            <div class="gsheet__grab"></div>
+            <span class="gmark" style="font-size:1.7em;">G</span>
+            <div class="gsheet__h">Choose an account</div>
+            <div class="gsheet__s">to continue to Course App</div>
+            <div class="acct is-sel"><span class="acct__av">A</span><span><b>Ali Hassan</b><small>ali@gmail.com</small></span></div>
+            <div class="acct"><span class="acct__av" style="--av:#8E24AA;">S</span><span><b>Sara Omar</b><small>sara@gmail.com</small></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-mid" style="font-size:1.6cqw;"><svg class="ico"><use href="#i-arrow-right"/></svg></div>
+      <div class="ph" style="--pw:11.5cqw; align-self:flex-end; margin-bottom:1.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar">Home</div>
+          <div class="col" style="gap:.55em; text-align:center; padding-top:1.2em;">
+            <div class="m-avatar m-photo" style="width:4.4em; height:4.4em; justify-self:center; align-self:center;"></div>
+            <div class="m-title" style="font-size:1.2em;">Welcome, Ali Hassan!</div>
+            <div class="m-sub">You are logged in as ali@gmail.com</div>
+            <div class="m-btn m-btn--fill is-wide" style="margin-top:.5em;">Logout</div>
+          </div>
+          <div class="snack">Signed in with Google. Welcome!</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <aside class="notes"><p>Ask: how many of you have created an account in an app with “Continue with Google”? Most hands go up. Today we build that button on our own login page.</p></aside>
+</section>
+
+<!-- 02 · Learning objectives -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Today</p>
+      <h2 class="title">Learning objectives</h2>
+    </header>
+    <div class="body wrap" style="align-items:start;">
+      <article class="card card--hl">
+        <h3>By the end of today you can</h3>
+        <ul class="checklist stagger">
+          <li><span>Explain the path <b>account picker → ID token → Firebase user</b></span></li>
+          <li><span>Set up the console, Android (<b>SHA-1</b>) and iOS (<b>URL scheme</b>)</span></li>
+          <li><span>Use the new <code>google_sign_in</code> 7.x API</span></li>
+          <li><span>Handle success, cancel and failure</span></li>
+          <li><span>Sign out of Google <b>and</b> Firebase</span></li>
+        </ul>
+      </article>
+      <div class="side">
+        <article class="card">
+          <h3>New words today</h3>
+          <div class="defs stagger" style="margin-top:1.2cqw;">
+            <div class="def"><code>ID token</code><span>Google's signed proof of who the user is</span></div>
+            <div class="def"><code>credential</code><span>the ID token, packed for Firebase</span></div>
+            <div class="def"><code>SHA-1</code><span>a fingerprint of the key that signs your Android app</span></div>
+            <div class="def"><code>URL scheme</code><span>the address Google uses to come back to our iOS app</span></div>
+          </div>
+        </article>
+        <div class="callout callout--ok goal"><svg class="ico"><use href="#i-target"/></svg><div><b>Goal:</b> a working <span class="gmark">G</span> “Continue with Google” button on our Lecture 21 login page.</div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Most bugs today are setup bugs, not code bugs. Promise students the code part is short because <code>AuthService</code> and the <code>AuthGate</code> from Lecture 21 already do most of the work.</p></aside>
+</section>
+
+<!-- 03 · How Google Sign-In works -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">The big picture</p>
+      <h2 class="title">How Google Sign-In works</h2>
+    </header>
+    <div class="body" style="grid-template-rows: auto auto; align-content:start; gap:1.8cqw;">
+      <div class="gflow">
+        <div class="gflow__lane" style="grid-column:1 / 6; --c:#4285F4;"><code>google_sign_in</code> talks to Google</div>
+        <div class="gflow__lane" style="grid-column:7 / 10; --c:#F57C00;"><code>firebase_auth</code> talks to Firebase</div>
+        <article class="card gnode">
+          <h3>Our app</h3>
+          <div class="gnode__vis"><span class="gbtn"><span class="gmark">G</span>Continue with Google</span></div>
+          <span class="gnode__cap">tap the button</span>
+          <code class="api">_googleLogin()</code>
+        </article>
+        <div class="arrow-mid"><svg class="ico"><use href="#i-arrow-right"/></svg></div>
+        <article class="card gnode">
+          <h3>Google account picker</h3>
+          <div class="gnode__vis"><div class="mini" style="display:grid; gap:.2cqw;">
+            <div class="acct is-sel" style="font-size:.95cqw;"><span class="acct__av">A</span><span><b>Ali Hassan</b><small>ali@gmail.com</small></span></div>
+            <div class="acct" style="font-size:.95cqw;"><span class="acct__av" style="--av:#8E24AA;">S</span><span><b>Sara Omar</b><small>sara@gmail.com</small></span></div>
+          </div></div>
+          <span class="gnode__cap">choose <b>ali@gmail.com</b></span>
+          <code class="api">authenticate()</code>
+        </article>
+        <div class="arrow-mid"><svg class="ico"><use href="#i-arrow-right"/></svg></div>
+        <article class="card gnode">
+          <h3>ID token</h3>
+          <div class="gnode__vis"><div class="idtoken">Google says:<br><b>this is Ali</b><span class="stamp">Signed · Google</span></div></div>
+          <span class="gnode__cap">Google's stamp</span>
+          <code class="api">authentication<wbr>.idToken</code>
+        </article>
+        <div class="arrow-mid"><svg class="ico"><use href="#i-arrow-right"/></svg></div>
+        <article class="card gnode">
+          <h3>Firebase credential</h3>
+          <div class="gnode__vis"><span class="itile" style="width:4.4cqw; height:4.4cqw; font-size:2.3cqw;"><svg class="ico"><use href="#i-key"/></svg></span></div>
+          <span class="gnode__cap">the ID token, packed for Firebase</span>
+          <code class="api">GoogleAuthProvider<wbr>.credential</code>
+        </article>
+        <div class="arrow-mid"><svg class="ico"><use href="#i-arrow-right"/></svg></div>
+        <article class="card gnode">
+          <h3>Firebase user</h3>
+          <div class="gnode__vis"><div class="mini" style="display:flex; align-items:center; gap:.6cqw; text-align:left;">
+            <span class="m-photo" style="width:3cqw; height:3cqw; border-radius:50%; flex:none;"></span>
+            <span style="font-size:.85cqw; line-height:1.35;"><b style="color:#1F1F1F;">Ali Hassan</b><br><span style="color:#5F6368;">uid: 7Hq2…x9Lm</span></span>
+          </div></div>
+          <span class="gnode__cap">AuthGate shows <b>Home</b></span>
+          <code class="api">signInWithCredential</code>
+        </article>
+      </div>
+      <div class="stagger" style="display:grid; grid-template-columns: 1fr 1fr; gap:1.1cqw 1.4cqw;">
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-check-circle"/></svg><div>The user signs in with the Google account already on the phone: <b>no new password</b></div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-badge-check"/></svg><div><b>ID token</b>: a signed message from Google that says who the user is. Firebase can check that Google really signed it</div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-key"/></svg><div><b>Credential</b>: the ID token packed for Firebase (<code>GoogleAuthProvider.credential</code>)</div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-user-plus"/></svg><div>The first time, Firebase <b>creates</b> the user; after that it signs the same user in</div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Today's road: console → Android → iOS → package → code. Two packages work together: <code>google_sign_in</code> talks to Google, <code>firebase_auth</code> talks to Firebase. Compare the ID token with a passport stamp: Firebase does not know your Google password; it trusts Google's stamp.</p></aside>
+</section>
+
+<!-- 04 · Enable the Google provider -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Setup · Firebase console</p>
+      <h2 class="title">Enable the Google provider</h2>
+    </header>
+    <div class="body" style="grid-template-columns: 1fr 1fr; gap:2.4cqw; align-items:start;">
+      <div class="side">
+        <ol class="steps bigsteps bigsteps--pins stagger">
+          <li><span>Console → <b>Authentication</b> → <b>Sign-in method</b> → <b>Add new provider</b> → <b>Google</b></span></li>
+          <li><span>Turn on <b>Enable</b></span></li>
+          <li><span><b>Public-facing name for project</b>: <code>Course App</code> · <b>Support email for project</b>: choose your email</span></li>
+          <li><span><b>Save</b> → the list now shows Email/Password <b>and</b> Google as <b>Enabled</b></span></li>
+        </ol>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-key"/></svg><div>Enabling Google also creates OAuth <b>client IDs</b> for your apps (including a “Web client”). The packages need them, so we download the settings again on Slide 6.</div></div>
+      </div>
+      <figure class="shot">
+        <div class="shot__bar"><i></i><i></i><i></i><span class="shot__url"><svg class="ico"><use href="#i-lock"/></svg>console.firebase.google.com</span></div>
+        <div class="fbc">
+          <div class="fbc__top"><svg class="ico"><use href="#i-flame"/></svg><b>Course App</b><span class="sep">›</span><span>Authentication</span></div>
+          <div class="fbc__tabs"><span>Users</span><span class="is-on">Sign-in method</span><span>Templates</span><span>Usage</span><span>Settings</span></div>
+          <div class="fbc__body">
+            <div class="fbc__bar"><h5>Sign-in providers</h5><span class="grow"></span><span class="fbc__btn hot">Add new provider<i class="pin">1</i></span></div>
+            <div class="fbc__row"><svg class="ico"><use href="#i-mail"/></svg>Email/Password<span class="grow"></span><span class="fbc__on">Enabled</span></div>
+            <div class="fbc__panel">
+              <div class="fbc__bar"><span class="gmark" style="font-size:1.15cqw;">G</span><b>Google</b><span class="grow"></span><span class="hot" style="display:inline-flex; align-items:center; gap:.6cqw; padding:.1cqw .2cqw .1cqw 1.4cqw;"><i class="pin" style="top:50%; right:auto; left:-1cqw; transform:translateY(-50%);">2</i>Enable<span class="fbc__toggle"></span></span></div>
+              <div class="hot" style="display:grid; gap:.6cqw; padding:.15cqw .15cqw .15cqw 1.4cqw;"><i class="pin" style="top:50%; right:auto; left:-1cqw; transform:translateY(-50%);">3</i>
+                <div class="fbc__field"><small>Public-facing name for project</small><div class="fbc__input">Course App</div></div>
+                <div class="fbc__field"><small>Support email for project</small><div class="fbc__input">you@gmail.com ▾</div></div>
+              </div>
+              <div class="fbc__bar"><span class="grow"></span><span class="fbc__btn fbc__btn--text">Cancel</span><span class="fbc__btn hot">Save<i class="pin">4</i></span></div>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Users see the public-facing name and the support email on Google's screens, so use real ones. An OAuth client ID is a public ID that tells Google “this request comes from the Course App”.</p></aside>
+</section>
+
+<!-- 05 · Android · SHA-1 and SHA-256 -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Setup · Android</p>
+      <h2 class="title">Android · get the SHA-1 and SHA-256</h2>
+    </header>
+    <div class="body" style="grid-template-rows: auto auto; align-content:start; gap:1.4cqw;">
+      <div class="term">
+        <div class="term__bar"><i></i><i></i><i></i><span>Terminal</span><span class="grow"></span><span>run the app on Android once first</span></div>
+<pre style="font-size:1.02cqw;"><span class="t-c"># macOS, in the project folder</span>
+<span class="t-p">$</span> cd android &amp;&amp; ./gradlew signingReport
+
+<span class="t-c"># Windows, in the project folder (PowerShell; in Command Prompt drop the .\)</span>
+<span class="t-p">&gt;</span> cd android
+<span class="t-p">&gt;</span> .\gradlew signingReport
+
+<span class="t-c"># Or, on macOS, with keytool</span>
+<span class="t-p">$</span> keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android</pre>
+      </div>
+      <div style="display:grid; grid-template-columns: auto 1fr; gap:1.6cqw; align-items:start;">
+        <div class="term">
+          <div class="term__bar"><i></i><i></i><i></i><span>Output · the :app part (yours differs)</span></div>
+<pre style="font-size:1.02cqw;"><span class="t-dim">&gt; Task :app:signingReport</span>
+Variant: <span class="t-b">debug</span>
+Config: debug
+Store: ~/.android/debug.keystore
+Alias: AndroidDebugKey
+<span class="t-dim">MD5: 6C:0E:…:B2:41</span>
+<span class="t-warn">SHA1: 3F:A1:…:7C:0B</span>          <span class="t-ok">← copy</span>
+<span class="t-warn">SHA-256: 9D:42:…:E8:15</span>       <span class="t-ok">← copy</span></pre>
+        </div>
+        <div class="stagger" style="display:grid; grid-template-columns: 1fr 1fr; gap:1.1cqw;">
+          <div class="callout callout--info"><svg class="ico"><use href="#i-fingerprint"/></svg><div>A <b>fingerprint</b> is a short “photo” of the key that signs your app: Google uses it to know the app is really yours</div></div>
+          <div class="callout callout--info"><svg class="ico"><use href="#i-copy"/></svg><div>In the output, under <code>Variant: debug</code>, copy the lines <b><code>SHA1:</code></b> and <b><code>SHA-256:</code></b></div></div>
+          <div class="callout callout--info"><svg class="ico"><use href="#i-file"/></svg><div>The debug key (<code>~/.android/debug.keystore</code>) is created the first time you run the app on Android</div></div>
+          <div class="callout callout--warn"><svg class="ico"><use href="#i-laptop"/></svg><div><b>Every computer has its own debug key</b>: each student adds their own SHA-1</div></div>
+        </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Run the app on Android once before this step, so the Gradle files and the debug key exist. <code>signingReport</code> prints a report for every plugin too; scroll to the <code>:app</code> part.</p><p>Windows keytool line: <code>keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android</code>. If <code>keytool</code> is not found, use the one inside Android Studio (<code>…\Android Studio\jbr\bin\keytool.exe</code>, or on macOS <code>/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/keytool</code>).</p></aside>
+</section>
+
+<!-- 06 · Android · add the fingerprints -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Setup · Android</p>
+      <h2 class="title">Android · add the fingerprints, download the settings again</h2>
+    </header>
+    <div class="body" style="grid-template-columns: 1fr 1fr; gap:2.4cqw; align-items:start;">
+      <div class="side">
+        <ol class="steps bigsteps bigsteps--pins stagger" style="font-size:1.38cqw; gap:1.1cqw;">
+          <li><span>Console → ⚙ <b>Project settings</b> → <b>General</b> → <b>Your apps</b> → the Android app</span></li>
+          <li><span><b>Add fingerprint</b> → paste the SHA-1 → <b>Save</b>. Again for the SHA-256</span></li>
+          <li><span>In the project folder: <code>flutterfire configure</code> (same project, same platforms; say <b>yes</b> to overwrite)</span></li>
+          <li><span><b>Stop</b> the app and <code>flutter run</code> again: hot reload does not load new native settings</span></li>
+        </ol>
+        <div class="term">
+          <div class="term__bar"><i></i><i></i><i></i><span>Terminal · steps 3 and 4</span></div>
+<pre style="font-size:1.02cqw;"><span class="t-p">$</span> flutterfire configure    <span class="t-c"># yes, overwrite</span>
+<span class="t-c"># stop the app, then</span>
+<span class="t-p">$</span> flutter run</pre>
+        </div>
+      </div>
+      <div class="side">
+        <figure class="shot">
+          <div class="shot__bar"><i></i><i></i><i></i><span class="shot__url"><svg class="ico"><use href="#i-lock"/></svg>console.firebase.google.com</span></div>
+          <div class="fbc">
+            <div class="fbc__top"><svg class="ico"><use href="#i-flame"/></svg><b>Course App</b><span class="sep">›</span><span>Project settings</span></div>
+            <div class="fbc__tabs"><span class="is-on">General</span><span>Cloud Messaging</span><span>Integrations</span><span>Service accounts</span></div>
+            <div class="fbc__body">
+              <h5>Your apps</h5>
+              <div class="fbc__apps" style="gap:.9cqw 2cqw;">
+                <div class="fbc__list">
+                  <h6>Android apps</h6>
+                  <div class="fbc__row is-sel hot"><i class="pin" style="top:50%; right:-1.5cqw; transform:translateY(-50%);">1</i><svg class="ico"><use href="#i-android"/></svg><span>Course App<br><small>com.example.course_app</small></span></div>
+                  <h6>Apple apps</h6>
+                  <div class="fbc__row"><svg class="ico"><use href="#i-apple"/></svg><span>Course App</span></div>
+                </div>
+                <div class="fbc__detail">
+                  <div class="fbc__kv"><small>Package name</small><span>com.example.course_app</span></div>
+                  <h6>SHA certificate fingerprints</h6>
+                  <div class="fbc__row"><code>3F:A1:…:7C:0B</code><span class="grow"></span><small>SHA-1</small></div>
+                  <div class="fbc__row"><code>9D:42:…:E8:15</code><span class="grow"></span><small>SHA-256</small></div>
+                  <span class="fbc__link hot"><svg class="ico"><use href="#i-plus"/></svg>Add fingerprint<i class="pin" style="top:50%; right:-2.7cqw; transform:translateY(-50%);">2</i></span>
+                  <span class="fbc__btn fbc__btn--out" style="justify-self:start;"><svg class="ico"><use href="#i-download"/></svg>google-services.json</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </figure>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-file"/></svg><div><code>android/app/google-services.json</code> now has <code>oauth_client</code> entries, including the web client (<code>"client_type": 3</code>). On Android, <code>google_sign_in</code> reads that client ID automatically</div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Instead of step 3 you can click <b>google-services.json</b> on the same settings page and replace <code>android/app/google-services.json</code>, but re-running the CLI also refreshes the iOS file and <code>firebase_options.dart</code>. When you publish the app one day, the store key has a different fingerprint: add that SHA-1 too.</p></aside>
+</section>
+
+<!-- 07 · iOS · Info.plist -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Setup · iOS</p>
+      <h2 class="title">iOS · <code>Info.plist</code></h2>
+    </header>
+    <div class="body walk" style="grid-template-columns: auto 1fr;">
+      <div class="term code code--lg">
+        <div class="term__bar"><i></i><i></i><i></i><span>ios/Runner/Info.plist</span><span class="grow"></span><span>inside the top &lt;dict&gt;</span></div>
+<pre class="hl" data-groups="1-2:g1;3-13:g2">&lt;key&gt;GIDClientID&lt;/key&gt;
+&lt;string&gt;123456789012-abc123.apps.googleusercontent.com&lt;/string&gt;
+&lt;key&gt;CFBundleURLTypes&lt;/key&gt;
+&lt;array&gt;
+  &lt;dict&gt;
+    &lt;key&gt;CFBundleTypeRole&lt;/key&gt;
+    &lt;string&gt;Editor&lt;/string&gt;
+    &lt;key&gt;CFBundleURLSchemes&lt;/key&gt;
+    &lt;array&gt;
+      &lt;string&gt;com.googleusercontent.apps.123456789012-abc123&lt;/string&gt;
+    &lt;/array&gt;
+  &lt;/dict&gt;
+&lt;/array&gt;</pre>
+      </div>
+      <div class="explain">
+        <p class="small muted">Copy from <code>ios/Runner/GoogleService-Info.plist</code> (the new one from Slide 6):</p>
+        <div class="legend-groups stagger">
+          <div class="lg" style="--c:#13B9FD;"><span class="n">1</span><b><code>CLIENT_ID</code> → <code>GIDClientID</code></b><span>The iOS client ID of our app</span></div>
+          <div class="lg" style="--c:#FFC857;"><span class="n">2</span><b><code>REVERSED_CLIENT_ID</code> → the URL scheme</b><span>The <b>URL scheme</b> is the address Google uses to come back to our app after the user picks an account</span></div>
+        </div>
+        <div class="callout callout--warn"><svg class="ico"><use href="#i-apple"/></svg><div>Mac with Xcode only. On Windows, test on Android</div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>These are the steps from the <code>google_sign_in_ios</code> README. If <code>CLIENT_ID</code> is missing from <code>GoogleService-Info.plist</code>, the Google provider was enabled after the file was downloaded: run <code>flutterfire configure</code> again. Without the URL scheme, the app crashes on the first tap (see Common mistakes in the lecture plan).</p></aside>
+</section>
+
+<!-- 08 · Install google_sign_in, initialize once -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">The package</p>
+      <h2 class="title">Install <code>google_sign_in</code> and initialize it once</h2>
+    </header>
+    <div class="body walk" style="grid-template-columns: auto 1fr;">
+      <div class="side">
+        <div class="term">
+          <div class="term__bar"><i></i><i></i><i></i><span>Terminal</span></div>
+<pre style="font-size:1cqw;"><span class="t-p">$</span> flutter pub add google_sign_in          <span class="t-c"># pubspec: google_sign_in: ^7.2.0</span></pre>
+        </div>
+        <div class="term code">
+          <div class="term__bar"><i></i><i></i><i></i><span>lib/main.dart</span><span class="grow"></span><span>main()</span></div>
+<pre class="hl" data-hl="5-9">Future&lt;void&gt; main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // google_sign_in 7.x: call initialize() exactly ONCE, before anything else.
+  // (On the web we use Firebase's signInWithPopup instead, so we skip it.)
+  if (!kIsWeb) {
+    await GoogleSignIn.instance.initialize();
+  }
+
+  runApp(const MyApp());
+}</pre>
+        </div>
+      </div>
+      <div class="explain">
+        <article class="card" style="padding:1.3cqw 1.4cqw;">
+          <h3 style="font-size:1.3cqw;"><span class="badge" style="margin-right:.6cqw;">7.x is new</span></h3>
+          <div class="defs stagger" style="margin-top:1cqw; gap:.7cqw;">
+            <div class="def"><code>GoogleSignIn.instance</code><span>one shared object</span></div>
+            <div class="def"><code>initialize()</code><span>exactly once</span></div>
+            <div class="def"><code>authenticate()</code><span>shows the picker</span></div>
+            <div class="def"><code>GoogleSignInException</code><span>the errors</span></div>
+          </div>
+        </article>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-globe"/></svg><div><code>kIsWeb</code> (from <code>package:flutter/foundation.dart</code>) is <code>true</code> when the app runs in a browser</div></div>
+        <div class="callout callout--warn"><svg class="ico"><use href="#i-alert"/></svg><div>Tutorials with <code>GoogleSignIn().signIn()</code> are for 6.x and do <b>not</b> compile with 7.x</div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>New imports in <code>main.dart</code>: <code>package:flutter/foundation.dart</code> and <code>package:google_sign_in/google_sign_in.dart</code>. The package README says that calling other methods before <code>initialize()</code> finishes, or calling it twice, gives undefined behavior: that is why it lives in <code>main()</code>.</p></aside>
+</section>
+
+<!-- 09 · AuthService · signInWithGoogle() -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">AuthService · sign in</p>
+      <h2 class="title"><code>AuthService</code> · <code>signInWithGoogle()</code></h2>
+    </header>
+    <div class="body walk" style="grid-template-columns: auto 1fr;">
+      <div class="side">
+        <div class="term code code--nonum">
+          <div class="term__bar"><i></i><i></i><i></i><span>lib/services/auth_service.dart</span><span class="grow"></span><span>new field</span></div>
+<pre class="hl">final GoogleSignIn _googleSignIn = GoogleSignIn.instance;</pre>
+        </div>
+        <div class="term code">
+          <div class="term__bar"><i></i><i></i><i></i><span>inside Future&lt;String?&gt; signInWithGoogle() · try { }</span></div>
+<pre class="hl" data-groups="1-2:g1;4-8:g2;10-13:g3">      // 1. Show Google's account picker.
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
+
+      // 2. Take the ID token: Google's proof of who the user is.
+      final String? idToken = googleUser.authentication.idToken;
+      if (idToken == null) {
+        return 'Google did not send an ID token. Check the setup.';
+      }
+
+      // 3. Turn it into a Firebase credential and sign in to Firebase.
+      final credential = GoogleAuthProvider.credential(idToken: idToken);
+      await _auth.signInWithCredential(credential);
+      return null;</pre>
+        </div>
+      </div>
+      <div class="explain">
+        <div class="legend-groups stagger">
+          <div class="lg" style="--c:#13B9FD;"><span class="n">1</span><b><code>authenticate()</code></b><span>Returns the chosen account, or <b>throws</b> if anything goes wrong (even cancel)</span></div>
+          <div class="lg" style="--c:#FFC857;"><span class="n">2</span><b><code>authentication.idToken</code></b><span>In 7.x, <code>authentication</code> is a normal getter: <b>no <code>await</code></b>. It only has an <code>idToken</code></span></div>
+          <div class="lg" style="--c:#4ADE80;"><span class="n">3</span><b><code>signInWithCredential</code></b><span>Creates the Firebase user the first time, then <code>authStateChanges()</code> tells the AuthGate</span></div>
+        </div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-bulb"/></svg><div>Same idea as Lecture 21: <code>null</code> = success, a text = the message to show</div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p><code>GoogleAuthProvider</code> comes from <code>firebase_auth</code>; <code>GoogleSignInAccount</code> comes from <code>google_sign_in</code>. Point at the numbers 1–2–3: they are the arrows of Slide 3.</p></aside>
+</section>
+
+<!-- 10 · Cancel and failure -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">AuthService · errors</p>
+      <h2 class="title">Cancel and failure</h2>
+    </header>
+    <div class="body" style="grid-template-rows: auto auto; align-content:start; gap:1.4cqw;">
+      <div style="display:grid; grid-template-columns: auto 1fr; gap:2cqw; align-items:start;">
+        <div class="term code code--sm">
+          <div class="term__bar"><i></i><i></i><i></i><span>signInWithGoogle() · after the try { }</span></div>
+<pre class="hl" data-groups="3-5:g2">    } on GoogleSignInException catch (e) {
+      debugPrint('Google sign-in error: $e'); // full details in the console
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return 'Google sign-in was canceled.';
+      }
+      return 'Google sign-in failed (${e.code.name}).';
+    } on FirebaseAuthException catch (e) {
+      return messageFor(e.code);
+    }</pre>
+        </div>
+        <div class="explain stagger">
+          <div class="callout callout--ok"><svg class="ico"><use href="#i-check-circle"/></svg><div>Cancel is not a crash: we just tell the user</div></div>
+          <div class="callout callout--info"><svg class="ico"><use href="#i-terminal"/></svg><div><code>debugPrint</code> writes the full exception to the <b>Debug Console</b>: look there when “canceled” appears although nobody canceled</div></div>
+        </div>
+      </div>
+      <table class="tbl tbl--probs">
+        <thead><tr><th><svg class="ico"><use href="#i-alert"/></svg>Error</th><th><svg class="ico"><use href="#i-info"/></svg>When</th></tr></thead>
+        <tbody>
+          <tr><td style="width:47%;"><code>GoogleSignInExceptionCode.canceled</code></td><td>The user closed the picker. On Android, also some setup errors (for example a missing SHA-1)</td></tr>
+          <tr><td><code>GoogleSignInExceptionCode.clientConfigurationError</code></td><td>Setup is wrong (for example “serverClientId must be provided on Android”)</td></tr>
+          <tr><td><code>FirebaseAuthException</code><br><code>account-exists-with-different-credential</code></td><td>The email already belongs to an account with another sign-in method</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Cancel is not a crash: we just tell the user. <code>debugPrint</code> writes the full exception to the Debug Console, which is where you look when “canceled” appears although nobody canceled. <code>messageFor</code> gets two new lines: <code>account-exists-with-different-credential</code> and <code>popup-closed-by-user</code> (web).</p></aside>
+</section>
+
+<!-- 11 · Sign out of Google and Firebase -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">AuthService · sign out</p>
+      <h2 class="title">Sign out of Google and Firebase</h2>
+    </header>
+    <div class="body" style="grid-template-columns: 1fr auto; gap:2.4cqw; align-items:start;">
+      <div class="side">
+        <div class="term code code--lg">
+          <div class="term__bar"><i></i><i></i><i></i><span>lib/services/auth_service.dart</span><span class="grow"></span><span>signOut()</span></div>
+<pre class="hl" data-groups="2-4:g2;5:g1">  Future&lt;void&gt; signOut() async {
+    if (!kIsWeb) {
+      await _googleSignIn.signOut(); // next time, Google asks which account
+    }
+    await _auth.signOut(); // AuthGate shows the LoginPage again
+  }</pre>
+        </div>
+        <div class="stats stagger">
+          <div class="card stat stat--bad"><small>Only FirebaseAuth.signOut()</small><b>Same account</b><span>It only forgets the <strong>Firebase</strong> user. Google remembers its own sign-in: the next tap may reuse the last account without asking</span></div>
+          <div class="card stat stat--ok"><small>Google + Firebase signOut()</small><b>Choose again</b><span>Signing out of both lets the user choose a <strong>different</strong> account</span></div>
+        </div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-log-out"/></svg><div>The Home page's Logout button does not change: it still calls <code>authService.signOut()</code></div></div>
+      </div>
+      <div class="ph" style="--pw:12.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar">Home</div>
+          <div class="col" style="gap:.6em; text-align:center; padding-top:1.4em;">
+            <div class="m-avatar m-photo" style="width:4.6em; height:4.6em; align-self:center;"></div>
+            <div class="m-title" style="font-size:1.25em;">Welcome, Ali Hassan!</div>
+            <div class="m-sub">You are logged in as ali@gmail.com</div>
+            <div class="m-sub" style="font-size:.7em; color:#9E9E9E;">uid: 7Hq2…x9Lm</div>
+            <div class="m-btn m-btn--fill is-wide is-tag" data-tag="authService.signOut()" style="margin-top:1em;">Logout</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>This is the payoff of <code>AuthService</code>: one method changed, and every page that logs out now does the right thing. Calling <code>_googleSignIn.signOut()</code> for an email/password user is harmless.</p></aside>
+</section>
+
+<!-- 12 · The "Continue with Google" button -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Login page · the button</p>
+      <h2 class="title">The “Continue with Google” button</h2>
+      <p class="lead">In <code>lib/login_page.dart</code>, under the Login button (after a <code>Row</code> with two <code>Divider</code>s and the word “or”)</p>
+    </header>
+    <div class="body" style="grid-template-columns: auto 1fr auto; gap:2cqw; align-items:start;">
+      <div class="term code code--sm">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/login_page.dart</span><span class="grow"></span><span>inside children: [ ]</span></div>
+<pre class="hl" data-groups="3,12:g1;5-10:g2;11:g3">SizedBox(
+  height: 50,
+  child: OutlinedButton.icon(
+    onPressed: busy ? null : _googleLogin,
+    icon: _isGoogleLoading
+        ? const SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(strokeWidth: 3),
+          )
+        : Image.asset('assets/images/google_logo.png', height: 24),
+    label: const Text('Continue with Google'),
+  ),
+),</pre>
+      </div>
+      <div class="explain">
+        <div class="legend-groups stagger">
+          <div class="lg" style="--c:#13B9FD;"><span class="n">1</span><b><code>OutlinedButton.icon</code></b><span>A button with an icon and a label</span></div>
+          <div class="lg" style="--c:#FFC857;"><span class="n">2</span><b>While loading</b><span>The icon becomes a spinner</span></div>
+          <div class="lg" style="--c:#4ADE80;"><span class="n">3</span><b>The logo</b><span>Save Google's “G” from <code>developers.google.com/<wbr>identity/<wbr>images/<wbr>g-logo.png</code> as <code>assets/<wbr>images/<wbr>google_logo.png</code></span></div>
+        </div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-image"/></svg><div>In <code>pubspec.yaml</code>, under <code>flutter:</code>, list <code>assets:</code> → <code style="white-space:nowrap;">- assets/images/</code> (Lecture 6), then stop and re-run</div></div>
+      </div>
+      <div class="ph" style="--pw:12.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="col" style="gap:.6em; padding-top:2.5em;">
+            <div style="display:grid; place-items:center;"><svg class="logo" style="width:2.7em; height:3.4em;"><use href="#flutter-logo"/></svg></div>
+            <div class="m-title" style="text-align:center;">Welcome back</div>
+            <div class="m-sub" style="text-align:center;">Log in to continue</div>
+            <div class="m-field" style="margin-top:.4em;"><svg class="ico"><use href="#i-mail"/></svg>Email</div>
+            <div class="m-field"><svg class="ico"><use href="#i-lock"/></svg>Password</div>
+            <div class="m-btn m-btn--text" style="align-self:flex-end; height:1.8em;">Forgot password?</div>
+            <div class="m-btn m-btn--fill is-wide">Login</div>
+            <div class="rowx m-or"><div class="m-divider"></div><span>or</span><div class="m-divider"></div></div>
+            <div class="m-btn m-btn--out m-btn--google is-wide is-tag" data-tag="OutlinedButton.icon"><span class="gmark">G</span>Continue with Google</div>
+            <div class="rowx" style="justify-content:center; font-size:.8em; gap:.25em;"><span>Don't have an account?</span><b style="color:#6750A4;">Sign up</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Google's branding guidelines ask for the official “G” logo on sign-in buttons, so we do not draw our own. (The “G” on this slide's phone is only a drawing; the app uses the real <code>google_logo.png</code>.) If your project already lists <code>assets/images/</code>, only add the file.</p></aside>
+</section>
+
+<!-- 13 · Login page · _googleLogin() -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Login page · the handler</p>
+      <h2 class="title">Login page · <code>_googleLogin()</code></h2>
+    </header>
+    <div class="body" style="grid-template-columns: auto 1fr auto; gap:2cqw; align-items:start;">
+      <div class="term code code--sm">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/login_page.dart</span><span class="grow"></span><span>_LoginPageState</span></div>
+<pre class="hl" data-hl="1,4,6-8">  bool _isGoogleLoading = false; // new
+
+  Future&lt;void&gt; _googleLogin() async {
+    final messenger = ScaffoldMessenger.of(context);
+
+    setState(() =&gt; _isGoogleLoading = true);
+    final error = await _authService.signInWithGoogle();
+    if (mounted) setState(() =&gt; _isGoogleLoading = false);
+
+    if (error != null) {
+      showAppSnackBar(messenger, error, isError: true);
+    } else {
+      showAppSnackBar(messenger, 'Signed in with Google. Welcome!');
+    }
+  }</pre>
+      </div>
+      <div class="explain stagger" style="gap:1cqw;">
+        <div class="callout callout--info"><svg class="ico"><use href="#i-copy"/></svg><div>The same pattern as <code>_login()</code> in Lecture 21: <b>messenger</b> before <code>await</code>, <b>mounted</b> after</div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-lock"/></svg><div>In <code>build()</code>: <code>final busy = _isLoading || _isGoogleLoading;</code> so only one request runs at a time</div></div>
+        <div class="callout callout--warn"><svg class="ico"><use href="#i-x-circle"/></svg><div><code>busy</code> disables “Forgot password?”, “Sign up” and the Google button; Login uses <code>onPressed: _isGoogleLoading ? null : _login</code></div></div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-home"/></svg><div>No navigation code: the AuthGate opens Home by itself</div></div>
+      </div>
+      <div class="ph" style="--pw:12.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="col" style="gap:.6em; padding-top:2.5em;">
+            <div style="display:grid; place-items:center;"><svg class="logo" style="width:2.7em; height:3.4em;"><use href="#flutter-logo"/></svg></div>
+            <div class="m-title" style="text-align:center;">Welcome back</div>
+            <div class="m-sub" style="text-align:center;">Log in to continue</div>
+            <div class="m-field" style="margin-top:.4em;"><svg class="ico"><use href="#i-mail"/></svg>Email</div>
+            <div class="m-field"><svg class="ico"><use href="#i-lock"/></svg>Password</div>
+            <div class="m-btn m-btn--text" style="align-self:flex-end; height:1.8em; color:rgba(29,27,32,.38);">Forgot password?</div>
+            <div class="m-btn m-btn--dis is-wide">Login</div>
+            <div class="rowx m-or"><div class="m-divider"></div><span>or</span><div class="m-divider"></div></div>
+            <div class="m-btn m-btn--out m-btn--google is-wide is-tag" data-tag="_isGoogleLoading" style="border-color:rgba(29,27,32,.12);"><span class="m-spin"></span><span style="color:rgba(29,27,32,.38);">Continue with Google</span></div>
+            <div class="rowx" style="justify-content:center; font-size:.8em; gap:.25em;"><span>Don't have an account?</span><b style="color:rgba(29,27,32,.38);">Sign up</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Ask why there are two loading flags instead of one. (Each button shows its own spinner, but both are disabled while either one is working.)</p></aside>
+</section>
+
+<!-- 14 · The full flow, end to end -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Try it</p>
+      <h2 class="title">The full flow, end to end</h2>
+    </header>
+    <div class="body" style="grid-template-columns: 1fr auto; gap:2.4cqw; align-items:start;">
+      <div class="side">
+        <ol class="steps bigsteps stagger" style="font-size:1.36cqw; gap:1.15cqw;">
+          <li><span>App starts<svg class="ico fl-arr"><use href="#i-arrow-right"/></svg><b>AuthGate</b>: user? <i>no</i><svg class="ico fl-arr"><use href="#i-arrow-right"/></svg>LoginPage</span></li>
+          <li><span>“Continue with Google”<svg class="ico fl-arr"><use href="#i-arrow-right"/></svg><code>authenticate()</code><svg class="ico fl-arr"><use href="#i-arrow-right"/></svg>account picker (a bottom sheet on Android, a Google page on iOS)</span></li>
+          <li><span>Account chosen<svg class="ico fl-arr"><use href="#i-arrow-right"/></svg><code>idToken</code><svg class="ico fl-arr"><use href="#i-arrow-right"/></svg><code>GoogleAuthProvider.credential</code><svg class="ico fl-arr"><use href="#i-arrow-right"/></svg><code>signInWithCredential</code></span></li>
+          <li><span>Firebase user<svg class="ico fl-arr"><use href="#i-arrow-right"/></svg><code>authStateChanges()</code><svg class="ico fl-arr"><use href="#i-arrow-right"/></svg>AuthGate<svg class="ico fl-arr"><use href="#i-arrow-right"/></svg><b>Home</b> with the Google name and photo</span></li>
+          <li><span>Logout<svg class="ico fl-arr"><use href="#i-arrow-right"/></svg>Google <code>signOut()</code> + Firebase <code>signOut()</code><svg class="ico fl-arr"><use href="#i-arrow-right"/></svg>LoginPage</span></li>
+        </ol>
+        <div class="stagger" style="display:grid; grid-template-columns: 1fr 1fr; gap:1.2cqw;">
+          <div class="callout callout--info"><svg class="ico"><use href="#i-users"/></svg><div>Check in the console: the <b>Users</b> tab shows the Google user with the Google icon <span class="gmark">G</span> under <b>Providers</b></div></div>
+          <div class="callout callout--ok"><svg class="ico"><use href="#i-refresh"/></svg><div>Close and reopen the app: still logged in (same AuthGate as Lecture 21)</div></div>
+        </div>
+      </div>
+      <div class="phones" style="gap:1.4cqw;">
+        <div class="ph-col"><span class="badge">Step 2</span>
+          <div class="ph" style="--pw:12cqw;">
+            <div class="ph__scr"><div class="ph__island"></div>
+              <div class="col" style="gap:.6em; padding-top:2.6em;">
+                <div style="display:grid; place-items:center;"><svg class="logo" style="width:2.7em; height:3.4em;"><use href="#flutter-logo"/></svg></div>
+                <div class="m-title" style="text-align:center;">Welcome back</div>
+                <div class="m-sub" style="text-align:center;">Log in to continue</div>
+                <div class="m-field" style="margin-top:.4em;"><svg class="ico"><use href="#i-mail"/></svg>Email</div>
+              </div>
+              <div class="scrim"></div>
+              <div class="gsheet">
+                <div class="gsheet__grab"></div>
+                <span class="gmark" style="font-size:1.7em;">G</span>
+                <div class="gsheet__h">Choose an account</div>
+                <div class="gsheet__s">to continue to Course App</div>
+                <div class="acct is-sel"><span class="acct__av">A</span><span><b>Ali Hassan</b><small>ali@gmail.com</small></span></div>
+                <div class="acct"><span class="acct__av" style="--av:#8E24AA;">S</span><span><b>Sara Omar</b><small>sara@gmail.com</small></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ph-col"><span class="badge badge--ok">Step 4</span>
+          <div class="ph" style="--pw:12cqw;">
+            <div class="ph__scr"><div class="ph__island"></div>
+              <div class="appbar">Home</div>
+              <div class="col" style="gap:.6em; text-align:center; padding-top:1.4em;">
+                <div class="m-avatar m-photo" style="width:4.6em; height:4.6em; align-self:center;"></div>
+                <div class="m-title" style="font-size:1.25em;">Welcome, Ali Hassan!</div>
+                <div class="m-sub">You are logged in as ali@gmail.com</div>
+                <div class="m-sub" style="font-size:.7em; color:#9E9E9E;">uid: 7Hq2…x9Lm</div>
+                <div class="m-btn m-btn--fill is-wide" style="margin-top:.8em;">Logout</div>
+              </div>
+              <div class="snack">Signed in with Google. Welcome!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Do it live: Google login, Home shows the photo (the <code>HomePage</code> now has a <code>CircleAvatar</code> with <code>user.photoURL</code>), Logout, then sign in with email/password from Lecture 21 to show both doors lead to the same building. Then tap Google and close the picker: “Google sign-in was canceled.”</p></aside>
+</section>
+
+<!-- 15 · Aside · Google Sign-In on the web -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Bonus</p>
+      <h2 class="title">Aside · Google Sign-In on the web</h2>
+    </header>
+    <div class="body walk">
+      <div class="side">
+        <div class="term code">
+          <div class="term__bar"><i></i><i></i><i></i><span>lib/services/auth_service.dart</span><span class="grow"></span><span>top of signInWithGoogle() · try { }</span></div>
+<pre class="hl" data-hl="2-5">      // On the web, Firebase opens Google's popup for us.
+      if (kIsWeb) {
+        await _auth.signInWithPopup(GoogleAuthProvider());
+        return null;
+      }</pre>
+        </div>
+        <figure class="shot">
+          <div class="shot__bar"><i></i><i></i><i></i><span class="shot__url"><svg class="ico"><use href="#i-lock"/></svg>accounts.google.com</span></div>
+          <div class="gpop">
+            <div class="gpop__brand"><span class="gmark" style="font-size:1.2cqw;">G</span>Sign in with Google</div>
+            <h5>Choose an account</h5>
+            <p>to continue to course-app.firebaseapp.com</p>
+            <div class="acct is-sel"><span class="acct__av">A</span><span><b>Ali Hassan</b><small>ali@gmail.com</small></span></div>
+            <div class="acct"><span class="acct__av" style="--av:#8E24AA;">S</span><span><b>Sara Omar</b><small>sara@gmail.com</small></span></div>
+          </div>
+        </figure>
+      </div>
+      <div class="explain stagger">
+        <div class="say"><p>On the web, <code>google_sign_in</code> 7.x has no <code>authenticate()</code> (it needs Google's own rendered button), so we let <b>Firebase</b> open Google's popup.</p></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-chrome"/></svg><div>Needs a web app in the project (<code>flutterfire configure</code> with <b>web</b>) and <code>flutter run -d chrome</code></div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-shield"/></svg><div><code>localhost</code> is already an authorized domain (Authentication → Settings → Authorized domains)</div></div>
+        <div class="callout callout--warn"><svg class="ico"><use href="#i-x-circle"/></svg><div>Closing the popup gives <code>popup-closed-by-user</code> → “Google sign-in was canceled.”</div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Only an aside: this course targets phones. The branch sits at the top of <code>signInWithGoogle()</code>, which is also why <code>main()</code> skips <code>GoogleSignIn.instance.initialize()</code> on the web.</p></aside>
+</section>
+
+<!-- 16 · Meme break -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Meme break</p>
+      <h2 class="title">Why does Google Sign-In “cancel” by itself?</h2>
+    </header>
+    <div class="body meme-slide">
+      <figure class="meme meme--always" style="--mw:54cqw;"><img src="https://i.imgflip.com/46e43q.png" alt="Always has been meme about the SHA-1 fingerprint">
+        <span class="cap cap--impact c1"><span>Wait, Google Sign-In fails on Android because the SHA-1 isn't in Firebase?</span></span>
+        <span class="cap cap--impact c2"><span>Always has been.</span></span></figure>
+      <div class="meme-side stagger">
+        <div class="say"><p>Ask the class: why is the second astronaut not surprised? What has been missing all along?</p></div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-check-circle"/></svg><div>Add the SHA-1 and SHA-256 in Project settings, run <code>flutterfire configure</code> again, then stop and re-run the app.</div></div>
+        <p class="meme-link">Make your own: <a href="https://imgflip.com/memegenerator/252600902" target="_blank" rel="noopener">imgflip meme generator</a> · <a href="https://knowyourmeme.com/memes/wait-its-all-ohio-always-has-been" target="_blank" rel="noopener">about this meme</a></p>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>The number-one Google Sign-In bug: the app's SHA-1 (and SHA-256) fingerprint is missing in the Firebase project settings, or the config wasn't re-downloaded after adding it. Show the <code>signingReport</code> command again.</p></aside>
+</section>
+
+<!-- 17 · Summary and questions -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Wrap-up</p>
+      <h2 class="title">Summary and questions</h2>
+    </header>
+    <div class="body wrap" style="grid-template-columns: 1.35fr .65fr; align-items:start;">
+      <article class="card card--hl">
+        <h3>Remember</h3>
+        <ul class="checklist stagger" style="gap:1.15cqw; margin-top:1.3cqw;">
+          <li><span>Google Sign-In: account picker → <b>ID token</b> → <code>GoogleAuthProvider.credential</code> → <code>signInWithCredential</code> → Firebase user</span></li>
+          <li><span>Setup: enable Google · Android SHA-1 + SHA-256, then <code>flutterfire configure</code> again · iOS <code>GIDClientID</code> + URL scheme</span></li>
+          <li><span><code>google_sign_in</code> 7.x: <code>GoogleSignIn.instance</code>, <code>initialize()</code> once, <code>authenticate()</code>, <code>GoogleSignInException</code></span></li>
+          <li><span>Cancel → <code>GoogleSignInExceptionCode.canceled</code>; sign out of <b>both</b> Google and Firebase</span></li>
+          <li><span>The same <code>AuthService</code> and <code>AuthGate</code> serve email and Google users</span></li>
+        </ul>
+      </article>
+      <div class="qa" style="align-self:center;">
+        <div class="qa__big grad-text" style="font-size:4.6cqw;">Questions?</div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-check-circle"/></svg><div>Back to the <b>learning objectives</b> on slide 2: which ones can you tick off now?</div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Ask the class to draw the flow of Slide 14 from memory. With Lectures 20–22, the course app now has a complete sign-in system.</p></aside>
+</section>
+
+<!-- 18 · Homework -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Practice at home</p>
+      <h2 class="title">Homework</h2>
+    </header>
+    <div class="body stagger" style="grid-template-columns: repeat(3, 1fr); grid-auto-rows: auto; align-content:start; gap:1.4cqw;">
+      <article class="card" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; gap:1cqw;"><span class="itile"><svg class="ico"><use href="#i-user"/></svg></span><h3>1 · Which door?</h3></div><p style="font-size:1.3cqw;">Show “Signed in with: Google” or “Email” on the Home page.</p></article>
+      <article class="card" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; gap:1cqw;"><span class="itile"><svg class="ico"><use href="#i-user-plus"/></svg></span><h3>2 · Google on sign up</h3></div><p style="font-size:1.3cqw;">Add “Continue with Google” to the sign-up page too.</p></article>
+      <article class="card" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; gap:1cqw;"><span class="itile"><svg class="ico"><use href="#i-languages"/></svg></span><h3>3 · Arabic messages</h3></div><p style="font-size:1.3cqw;">Arabic messages for the Google errors (Lecture 11).</p></article>
+      <article class="card" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; gap:1cqw;"><span class="itile"><svg class="ico"><use href="#i-switch"/></svg></span><h3>4 · Switch accounts</h3></div><p style="font-size:1.3cqw;">Two Google accounts on the emulator: log out and switch accounts.</p></article>
+      <article class="card card--hl" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; gap:1cqw;"><span class="itile"><svg class="ico"><use href="#i-globe"/></svg></span><h3>5 · The web</h3><span class="badge badge--warm">Bonus</span></div><p style="font-size:1.3cqw;">Run the app in Chrome with <code>signInWithPopup</code>.</p></article>
+      <div class="callout callout--info" style="align-self:start;"><svg class="ico"><use href="#i-bulb"/></svg><div>Exercise 1: <code>user.providerData</code> is a list of <code>UserInfo</code>. A <code>providerId</code> of <code>'google.com'</code> means Google, <code>'password'</code> means email and password.</div></div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Details and “done looks like” for each exercise are in the Homework section of the lecture plan.</p></aside>
+</section>
+
+</main>
+
+<div class="notes-panel" hidden>
+  <h4 class="np-title">Speaker notes</h4>
+  <div class="np-body"></div>
+</div>
+<div class="hint" aria-hidden="true"><kbd>←</kbd> <kbd>→</kbd> navigate · <kbd>F</kbd> fullscreen · <kbd>N</kbd> notes · <kbd>T</kbd> theme</div>
+
+<script src="js/deck.js"></script>
+</body>
+</html>
