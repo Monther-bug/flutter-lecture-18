@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lecture 22 · Google Sign-In</title>
-  <meta name="description" content="Mobile App Development with Flutter, Lecture 22: Add a Continue with Google button to the login page with google_sign_in 7.x and Firebase Authentication, including the Android fingerprints, the iOS URL scheme, cancel handling and signing out of both.">
+  <title>Lecture 18 · Google Sign-In</title>
+  <meta name="description" content="Mobile App Development with Flutter, Lecture 18: Add a Continue with Google button to the login page with google_sign_in 7.x and Firebase Authentication, including the Android fingerprints, the iOS URL scheme, cancel handling and signing out of both.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap" rel="stylesheet">
@@ -86,9 +86,9 @@
 <section class="slide">
   <div class="canvas"><div class="frame frame--title" style="grid-template-columns: 1fr 1fr;">
     <div class="stagger">
-      <p class="kicker">Lecture 22 · Mobile App Development</p>
+      <p class="kicker">Lecture 18 · Mobile App Development</p>
       <h1 class="hero">Firebase 3:<br><span class="grad-text">Google Sign-In</span></h1>
-      <p class="lead lead--hero">One tap, no new password. Today our Lecture 21 login page gets a “Continue with Google” button.</p>
+      <p class="lead lead--hero">One tap, no new password. Today our Lecture 17 login page gets a “Continue with Google” button.</p>
       <div class="chips">
         <span class="chip"><span class="avatar">MI</span>Eng. Monther Ibrahim</span>
         <span class="chip"><span class="avatar">M</span>Muhammad, M.Sc.</span>
@@ -178,12 +178,12 @@
             <div class="def"><code>URL scheme</code><span>the address Google uses to come back to our iOS app</span></div>
           </div>
         </article>
-        <div class="callout callout--ok goal"><svg class="ico"><use href="#i-target"/></svg><div><b>Goal:</b> a working <span class="gmark">G</span> “Continue with Google” button on our Lecture 21 login page.</div></div>
+        <div class="callout callout--ok goal"><svg class="ico"><use href="#i-target"/></svg><div><b>Goal:</b> a working <span class="gmark">G</span> “Continue with Google” button on our Lecture 17 login page.</div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
-  <aside class="notes"><p>Most bugs today are setup bugs, not code bugs. Promise students the code part is short because <code>AuthService</code> and the <code>AuthGate</code> from Lecture 21 already do most of the work.</p></aside>
+  <aside class="notes"><p>Most bugs today are setup bugs, not code bugs. Promise students the code part is short because <code>AuthService</code> and the <code>AuthGate</code> from Lecture 17 already do most of the work.</p></aside>
 </section>
 
 <!-- 03 · How Google Sign-In works -->
@@ -245,7 +245,7 @@
         <div class="callout callout--info"><svg class="ico"><use href="#i-user-plus"/></svg><div>The first time, Firebase <b>creates</b> the user; after that it signs the same user in</div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Today's road: console → Android → iOS → package → code. Two packages work together: <code>google_sign_in</code> talks to Google, <code>firebase_auth</code> talks to Firebase. Compare the ID token with a passport stamp: Firebase does not know your Google password; it trusts Google's stamp.</p></aside>
 </section>
@@ -287,7 +287,7 @@
         </div>
       </figure>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Users see the public-facing name and the support email on Google's screens, so use real ones. An OAuth client ID is a public ID that tells Google “this request comes from the Course App”.</p></aside>
 </section>
@@ -332,7 +332,7 @@ Alias: AndroidDebugKey
         </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Run the app on Android once before this step, so the Gradle files and the debug key exist. <code>signingReport</code> prints a report for every plugin too; scroll to the <code>:app</code> part.</p><p>Windows keytool line: <code>keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android</code>. If <code>keytool</code> is not found, use the one inside Android Studio (<code>…\Android Studio\jbr\bin\keytool.exe</code>, or on macOS <code>/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/keytool</code>).</p></aside>
 </section>
@@ -389,7 +389,7 @@ Alias: AndroidDebugKey
         <div class="callout callout--ok"><svg class="ico"><use href="#i-file"/></svg><div><code>android/app/google-services.json</code> now has <code>oauth_client</code> entries, including the web client (<code>"client_type": 3</code>). On Android, <code>google_sign_in</code> reads that client ID automatically</div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Instead of step 3 you can click <b>google-services.json</b> on the same settings page and replace <code>android/app/google-services.json</code>, but re-running the CLI also refreshes the iOS file and <code>firebase_options.dart</code>. When you publish the app one day, the store key has a different fingerprint: add that SHA-1 too.</p></aside>
 </section>
@@ -427,7 +427,7 @@ Alias: AndroidDebugKey
         <div class="callout callout--warn"><svg class="ico"><use href="#i-apple"/></svg><div>Mac with Xcode only. On Windows, test on Android</div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>These are the steps from the <code>google_sign_in_ios</code> README. If <code>CLIENT_ID</code> is missing from <code>GoogleService-Info.plist</code>, the Google provider was enabled after the file was downloaded: run <code>flutterfire configure</code> again. Without the URL scheme, the app crashes on the first tap (see Common mistakes in the lecture plan).</p></aside>
 </section>
@@ -475,7 +475,7 @@ Alias: AndroidDebugKey
         <div class="callout callout--warn"><svg class="ico"><use href="#i-alert"/></svg><div>Tutorials with <code>GoogleSignIn().signIn()</code> are for 6.x and do <b>not</b> compile with 7.x</div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>New imports in <code>main.dart</code>: <code>package:flutter/foundation.dart</code> and <code>package:google_sign_in/google_sign_in.dart</code>. The package README says that calling other methods before <code>initialize()</code> finishes, or calling it twice, gives undefined behavior: that is why it lives in <code>main()</code>.</p></aside>
 </section>
@@ -516,10 +516,10 @@ Alias: AndroidDebugKey
           <div class="lg" style="--c:#FFC857;"><span class="n">2</span><b><code>authentication.idToken</code></b><span>In 7.x, <code>authentication</code> is a normal getter: <b>no <code>await</code></b>. It only has an <code>idToken</code></span></div>
           <div class="lg" style="--c:#4ADE80;"><span class="n">3</span><b><code>signInWithCredential</code></b><span>Creates the Firebase user the first time, then <code>authStateChanges()</code> tells the AuthGate</span></div>
         </div>
-        <div class="callout callout--info"><svg class="ico"><use href="#i-bulb"/></svg><div>Same idea as Lecture 21: <code>null</code> = success, a text = the message to show</div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-bulb"/></svg><div>Same idea as Lecture 17: <code>null</code> = success, a text = the message to show</div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p><code>GoogleAuthProvider</code> comes from <code>firebase_auth</code>; <code>GoogleSignInAccount</code> comes from <code>google_sign_in</code>. Point at the numbers 1–2–3: they are the arrows of Slide 3.</p></aside>
 </section>
@@ -559,7 +559,7 @@ Alias: AndroidDebugKey
         </tbody>
       </table>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Cancel is not a crash: we just tell the user. <code>debugPrint</code> writes the full exception to the Debug Console, which is where you look when “canceled” appears although nobody canceled. <code>messageFor</code> gets two new lines: <code>account-exists-with-different-credential</code> and <code>popup-closed-by-user</code> (web).</p></aside>
 </section>
@@ -601,7 +601,7 @@ Alias: AndroidDebugKey
         </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>This is the payoff of <code>AuthService</code>: one method changed, and every page that logs out now does the right thing. Calling <code>_googleSignIn.signOut()</code> for an email/password user is harmless.</p></aside>
 </section>
@@ -657,7 +657,7 @@ Alias: AndroidDebugKey
         </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Google's branding guidelines ask for the official “G” logo on sign-in buttons, so we do not draw our own. (The “G” on this slide's phone is only a drawing; the app uses the real <code>google_logo.png</code>.) If your project already lists <code>assets/images/</code>, only add the file.</p></aside>
 </section>
@@ -689,7 +689,7 @@ Alias: AndroidDebugKey
   }</pre>
       </div>
       <div class="explain stagger" style="gap:1cqw;">
-        <div class="callout callout--info"><svg class="ico"><use href="#i-copy"/></svg><div>The same pattern as <code>_login()</code> in Lecture 21: <b>messenger</b> before <code>await</code>, <b>mounted</b> after</div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-copy"/></svg><div>The same pattern as <code>_login()</code> in Lecture 17: <b>messenger</b> before <code>await</code>, <b>mounted</b> after</div></div>
         <div class="callout callout--info"><svg class="ico"><use href="#i-lock"/></svg><div>In <code>build()</code>: <code>final busy = _isLoading || _isGoogleLoading;</code> so only one request runs at a time</div></div>
         <div class="callout callout--warn"><svg class="ico"><use href="#i-x-circle"/></svg><div><code>busy</code> disables “Forgot password?”, “Sign up” and the Google button; Login uses <code>onPressed: _isGoogleLoading ? null : _login</code></div></div>
         <div class="callout callout--ok"><svg class="ico"><use href="#i-home"/></svg><div>No navigation code: the AuthGate opens Home by itself</div></div>
@@ -711,7 +711,7 @@ Alias: AndroidDebugKey
         </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Ask why there are two loading flags instead of one. (Each button shows its own spinner, but both are disabled while either one is working.)</p></aside>
 </section>
@@ -734,7 +734,7 @@ Alias: AndroidDebugKey
         </ol>
         <div class="stagger" style="display:grid; grid-template-columns: 1fr 1fr; gap:1.2cqw;">
           <div class="callout callout--info"><svg class="ico"><use href="#i-users"/></svg><div>Check in the console: the <b>Users</b> tab shows the Google user with the Google icon <span class="gmark">G</span> under <b>Providers</b></div></div>
-          <div class="callout callout--ok"><svg class="ico"><use href="#i-refresh"/></svg><div>Close and reopen the app: still logged in (same AuthGate as Lecture 21)</div></div>
+          <div class="callout callout--ok"><svg class="ico"><use href="#i-refresh"/></svg><div>Close and reopen the app: still logged in (same AuthGate as Lecture 17)</div></div>
         </div>
       </div>
       <div class="phones" style="gap:1.4cqw;">
@@ -776,9 +776,9 @@ Alias: AndroidDebugKey
         </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
-  <aside class="notes"><p>Do it live: Google login, Home shows the photo (the <code>HomePage</code> now has a <code>CircleAvatar</code> with <code>user.photoURL</code>), Logout, then sign in with email/password from Lecture 21 to show both doors lead to the same building. Then tap Google and close the picker: “Google sign-in was canceled.”</p></aside>
+  <aside class="notes"><p>Do it live: Google login, Home shows the photo (the <code>HomePage</code> now has a <code>CircleAvatar</code> with <code>user.photoURL</code>), Logout, then sign in with email/password from Lecture 17 to show both doors lead to the same building. Then tap Google and close the picker: “Google sign-in was canceled.”</p></aside>
 </section>
 
 <!-- 15 · Aside · Google Sign-In on the web -->
@@ -816,7 +816,7 @@ Alias: AndroidDebugKey
         <div class="callout callout--warn"><svg class="ico"><use href="#i-x-circle"/></svg><div>Closing the popup gives <code>popup-closed-by-user</code> → “Google sign-in was canceled.”</div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Only an aside: this course targets phones. The branch sits at the top of <code>signInWithGoogle()</code>, which is also why <code>main()</code> skips <code>GoogleSignIn.instance.initialize()</code> on the web.</p></aside>
 </section>
@@ -838,7 +838,7 @@ Alias: AndroidDebugKey
         <p class="meme-link">Make your own: <a href="https://imgflip.com/memegenerator/252600902" target="_blank" rel="noopener">imgflip meme generator</a> · <a href="https://knowyourmeme.com/memes/wait-its-all-ohio-always-has-been" target="_blank" rel="noopener">about this meme</a></p>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>The number-one Google Sign-In bug: the app's SHA-1 (and SHA-256) fingerprint is missing in the Firebase project settings, or the config wasn't re-downloaded after adding it. Show the <code>signingReport</code> command again.</p></aside>
 </section>
@@ -866,9 +866,9 @@ Alias: AndroidDebugKey
         <div class="callout callout--info"><svg class="ico"><use href="#i-check-circle"/></svg><div>Back to the <b>learning objectives</b> on slide 2: which ones can you tick off now?</div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
-  <aside class="notes"><p>Ask the class to draw the flow of Slide 14 from memory. With Lectures 20–22, the course app now has a complete sign-in system.</p></aside>
+  <aside class="notes"><p>Ask the class to draw the flow of Slide 14 from memory. With Lectures 16–18, the course app now has a complete sign-in system.</p></aside>
 </section>
 
 <!-- 18 · Homework -->
@@ -886,7 +886,7 @@ Alias: AndroidDebugKey
       <article class="card card--hl" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; gap:1cqw;"><span class="itile"><svg class="ico"><use href="#i-globe"/></svg></span><h3>5 · The web</h3><span class="badge badge--warm">Bonus</span></div><p style="font-size:1.3cqw;">Run the app in Chrome with <code>signInWithPopup</code>.</p></article>
       <div class="callout callout--info" style="align-self:start;"><svg class="ico"><use href="#i-bulb"/></svg><div>Exercise 1: <code>user.providerData</code> is a list of <code>UserInfo</code>. A <code>providerId</code> of <code>'google.com'</code> means Google, <code>'password'</code> means email and password.</div></div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 22</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 18</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Details and “done looks like” for each exercise are in the Homework section of the lecture plan.</p></aside>
 </section>

@@ -1,4 +1,4 @@
-# Lecture 22 · Mobile App Development with Flutter
+# Lecture 18 · Mobile App Development with Flutter
 
 Open `index.html` in Chrome or Edge (double-click works, no server needed). Light theme by default; press **T** for dark.
 
